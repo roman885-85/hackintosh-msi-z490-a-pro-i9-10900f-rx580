@@ -1,0 +1,20 @@
+#!/bin/sh
+# Z490-A PRO: Wi-Fi Broadcom BCM4360 на macOS 14+ — накладення патчів OpenCore Legacy Patcher (Modern Wireless).
+LOG=/var/log/z490-drivers-install.log
+exec >>"$LOG" 2>&1
+echo "=== $(date) Wi-Fi, ціль=$3 ==="
+[ "$3" = "/" ] || { echo "ціль не завантажувальний том — патчі накладаються лише на запущену систему"; exit 0; }
+DARWIN=$(uname -r | cut -d. -f1)
+[ "$DARWIN" -ge 23 ] || { echo "macOS старіша за 14: Wi-Fi працює без патчів"; exit 0; }
+ioreg -rxc IOPCIDevice -w0 | grep -q '"IOName" = "pci14e4,43a0"' || { echo "BCM4360 не знайдено — пропускаю"; exit 0; }
+BUILD=$(sw_vers -buildVersion)
+P=/System/Library/CoreServices/OpenCore-Legacy-Patcher.plist
+if [ -f "$P" ] && plutil -extract "OS Version" raw "$P" 2>/dev/null | grep -q "($BUILD)" && plutil -extract "Modern Wireless Common" xml1 -o /dev/null "$P" 2>/dev/null; then
+  echo "патчі Wi-Fi уже накладені для $BUILD — пропускаю"; exit 0
+fi
+OCLP="/Library/Application Support/Dortania/OpenCore-Patcher.app/Contents/MacOS/OpenCore-Patcher"
+[ -x "$OCLP" ] || { echo "OpenCore Legacy Patcher не встановлено — пропускаю"; exit 0; }
+echo "накладаю патчі OCLP (--patch_sys_vol) для $BUILD..."
+"$OCLP" --patch_sys_vol
+echo "OCLP завершився з кодом $?"
+exit 0

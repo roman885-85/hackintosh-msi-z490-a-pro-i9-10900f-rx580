@@ -1,0 +1,15 @@
+#!/bin/sh
+# Z490-A PRO: вбудований звук (Realtek ALC897) на macOS 26+ — VoodooHDA у /Library/Extensions.
+LOG=/var/log/z490-drivers-install.log
+exec >>"$LOG" 2>&1
+echo "=== $(date) VoodooHDA, ціль=$3 ==="
+T="$3"; [ "$T" = "/" ] && T=""
+DARWIN=$(uname -r | cut -d. -f1)
+if [ "$DARWIN" -lt 25 ]; then echo "macOS старіша за 26: звук дає AppleALC із завантажувача — пропускаю"; exit 0; fi
+LE="$T/Library/Extensions"
+rm -rf "$LE/VoodooHDA.kext"
+cp -R "$T/Library/Application Support/Z490-A-PRO-Drivers/VoodooHDA.kext" "$LE/" && chown -R root:wheel "$LE/VoodooHDA.kext" && chmod -R 755 "$LE/VoodooHDA.kext"
+touch "$LE"
+echo "VoodooHDA встановлено в $LE"
+[ -z "$T" ] && /usr/bin/kmutil load -p /Library/Extensions/VoodooHDA.kext
+exit 0

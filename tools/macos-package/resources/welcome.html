@@ -1,0 +1,13 @@
+<html><head><meta charset="utf-8"><style>body{font-family:-apple-system,Helvetica;font-size:13px}</style></head><body>
+<h2>Драйвери для MSI Z490-A PRO (macOS)</h2>
+<p>Пакет для комп'ютера на MSI Z490-A PRO: Core i9-10900F, Radeon RX 580, Realtek RTL8125B, Broadcom BCM4360, Realtek ALC897, модель Mac — MacPro7,1.</p>
+<p>Що він робить (кнопкою «Налаштувати» можна зняти будь-який пункт):</p>
+<ul>
+<li><b>Завантажувач OpenCore</b> — ставить робочий OpenCore на розділ EFI системного диска, якщо його там немає. Такий самий не чіпає; інший не замінює, а кладе поруч у <code>EFI_from_pkg</code>.</li>
+<li><b>Вбудований звук</b> — на macOS 26 і новіших ставить VoodooHDA (Apple прибрала AppleHDA). Після встановлення дозвольте його в «Параметри → Конфіденційність і безпека» і перезапустіть.</li>
+<li><b>OpenCore Legacy Patcher 3.0.0-rc.3</b> — офіційний пакет Dortania без змін.</li>
+<li><b>Wi-Fi Broadcom</b> — на macOS 14+ накладає патчі OCLP «Modern Wireless», якщо їх ще немає для цієї збірки macOS (2–5 хвилин).</li>
+</ul>
+<p>Журнал встановлення: <code>/var/log/z490-drivers-install.log</code>.</p>
+<p>Перед збиранням пакета впишіть у <code>EFI/OC/config.plist</code> власні серійні номери (GenSMBIOS, MacPro7,1).</p>
+</body></html>

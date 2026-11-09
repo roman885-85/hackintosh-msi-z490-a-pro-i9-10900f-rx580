@@ -1,0 +1,35 @@
+#!/bin/sh
+# Z490-A PRO: завантажувач OpenCore на розділ EFI системного диска.
+# Ставить, лише якщо OpenCore там немає; такий самий — не чіпає; інший — кладе поруч EFI_from_pkg.
+LOG=/var/log/z490-drivers-install.log
+exec >>"$LOG" 2>&1
+echo "=== $(date) OpenCore, ціль=$3 ==="
+T="$3"; [ "$T" = "/" ] && T=""
+SRC="$T/Library/Application Support/Z490-A-PRO-Drivers/EFI"
+STAMP=$(date +%Y-%m-%d_%H%M)
+ROOTDEV=$(diskutil info "${3:-/}" | awk -F': *' '/Part of Whole/{print $2}')
+STORE=$(diskutil info -plist "$ROOTDEV" | plutil -extract APFSPhysicalStores.0.APFSPhysicalStore raw - 2>/dev/null)
+[ -z "$STORE" ] && STORE="$ROOTDEV"
+WHOLE=$(echo "$STORE" | sed -E 's/s[0-9]+$//')
+ESP="${WHOLE}s1"
+FS=$(diskutil info "$ESP" | awk -F': *' '/File System Personality/{print $2}')
+echo "системний диск $WHOLE, розділ завантажувача $ESP ($FS)"
+case "$FS" in *FAT*) ;; *) echo "$ESP не FAT — завантажувач не чіпаю"; exit 0 ;; esac
+MP=$(diskutil info "$ESP" | awk -F': *' '/Mount Point/{print $2}')
+WAS=1
+if [ -z "$MP" ]; then WAS=0; diskutil mount "$ESP" >/dev/null; MP=$(diskutil info "$ESP" | awk -F': *' '/Mount Point/{print $2}'); fi
+if [ -z "$MP" ] || [ ! -d "$MP" ]; then echo "не вдалося підключити $ESP"; exit 0; fi
+if [ ! -f "$MP/EFI/OC/OpenCore.efi" ]; then
+  mkdir -p "$MP/EFI"
+  [ -d "$MP/EFI/OC" ] && mv "$MP/EFI/OC" "$MP/EFI/OC_before_pkg_$STAMP"
+  [ -d "$MP/EFI/BOOT" ] && mv "$MP/EFI/BOOT" "$MP/EFI/BOOT_before_pkg_$STAMP"
+  cp -R "$SRC/OC" "$SRC/BOOT" "$MP/EFI/" && echo "OpenCore встановлено на $ESP (папку EFI/Microsoft, якщо є, не чіпав)"
+elif cmp -s "$MP/EFI/OC/config.plist" "$SRC/OC/config.plist"; then
+  echo "на $ESP уже такий самий OpenCore — без змін"
+else
+  rm -rf "$MP/EFI_from_pkg"; cp -R "$SRC" "$MP/EFI_from_pkg" && echo "на $ESP інший OpenCore — не замінюю; версія з пакета поруч у EFI_from_pkg"
+fi
+find "$MP" -maxdepth 4 -name "._*" -delete 2>/dev/null
+sync
+[ "$WAS" = 0 ] && diskutil unmount "$ESP" >/dev/null
+exit 0
