@@ -7,6 +7,10 @@ echo "=== $(date) OpenCore, ціль=$3 ==="
 T="$3"; [ "$T" = "/" ] && T=""
 SRC="$T/Library/Application Support/Z490-A-PRO-Drivers/EFI"
 STAMP=$(date +%Y-%m-%d_%H%M)
+# Публічний config.plist містить заглушки серійних номерів — такий завантажувач не ставимо.
+if grep -q "W00000000001" "$SRC/OC/config.plist" 2>/dev/null; then
+  echo "у config.plist заглушки серійних номерів — завантажувач не ставлю (впишіть свої й зберіть пакет build.sh --with-efi)"; exit 0
+fi
 ROOTDEV=$(diskutil info "${3:-/}" | awk -F': *' '/Part of Whole/{print $2}')
 STORE=$(diskutil info -plist "$ROOTDEV" | plutil -extract APFSPhysicalStores.0.APFSPhysicalStore raw - 2>/dev/null)
 [ -z "$STORE" ] && STORE="$ROOTDEV"

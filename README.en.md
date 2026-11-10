@@ -115,15 +115,44 @@ What is set up on this machine:
 
 Verified: the entry created with `bcdedit` booted macOS after the BIOS reset. Items 1 and 2 have not yet been tested by a real second reset.
 
-## Installer package
+## Driver package
 
-`tools/macos-package/build.sh` builds the full package `dist/Z490-A-PRO-Drivers-DATE.pkg` with selectable items:
-OpenCore (installed only if missing on the EFI partition of the system disk), VoodooHDA (macOS 26+),
-the official OpenCore Legacy Patcher (downloaded from GitHub, Dortania signature checked), and the Wi-Fi root patch
-(`OpenCore-Patcher --patch_sys_vol`, only if not yet applied for the current macOS build). Log — `/var/log/z490-drivers-install.log`.
+A ready package is in [Releases](https://github.com/roman885-85/hackintosh-msi-z490-a-pro-i9-10900f-rx580/releases/latest):
+`Z490-A-PRO-Drivers-DATE.pkg`. Install it **after** macOS is installed; use "Customize" to untick any item.
+
+| Item | What it does |
+|---|---|
+| Onboard audio (VoodooHDA) | on macOS 26+ installs VoodooHDA 3.6.8 into `/Library/Extensions` (Realtek ALC897) and triggers the approval prompt |
+| Broadcom Wi-Fi: OCLP root patch | on macOS 14+ runs `OpenCore-Patcher --patch_sys_vol` if the "Modern Wireless" patches are not yet applied for the current macOS build; does nothing without OCLP installed |
+
+**How to install:**
+1. For Wi-Fi first: add the Wi-Fi kexts to the EFI and enable them ([Before the first boot](#before-the-first-boot), step 2), restart,
+   then install [OpenCore Legacy Patcher 3.0.0-rc.3](https://github.com/dortania/OpenCore-Legacy-Patcher/releases/tag/3.0.0-rc.3)
+   (Dortania's `OpenCore-Patcher.pkg`). Skip this step if you don't need Wi-Fi.
+2. Download the driver package from Releases.
+3. The package is not signed with an Apple certificate, so macOS won't open it with a double-click. Use any of these:
+   - remove the download flag and open it as usual:
+     ```bash
+     xattr -d com.apple.quarantine ~/Downloads/Z490-A-PRO-Drivers-*.pkg
+     ```
+   - or System Settings → Privacy & Security → "Open Anyway" after the first attempt;
+   - or install from Terminal without the GUI:
+     ```bash
+     sudo installer -pkg ~/Downloads/Z490-A-PRO-Drivers-*.pkg -target /
+     ```
+4. Go through the installer steps (the Wi-Fi root patch takes 2–5 minutes).
+5. System Settings → Privacy & Security → "Allow" next to VoodooHDA.
+6. Restart — "Realtek ALC897" devices and Wi-Fi appear.
+
+Log: `/var/log/z490-drivers-install.log`.
+
+**Your own full package.** `./tools/macos-package/build.sh --with-efi --with-oclp` builds a package that also installs OpenCore to the
+EFI partition of the system disk (only if it is not there; put your serials in first) and the official OCLP (downloaded from GitHub,
+Dortania signature checked). The flags can be used separately.
 
 ## Changelog
 
+- **2026-11-10** — a ready driver package in Releases (VoodooHDA, OCLP Wi-Fi root patch) with step-by-step instructions; build flags `--with-efi` and `--with-oclp`.
 - **2026-11-09** — RTL812xLucy 1.1.1 → 1.1.3 (fixed link negotiation with partners slower than 2.5 Gbit/s);
   `LauncherOption` Disabled → Full; AppleALC limited to macOS 15; VoodooHDA for Tahoe; Windows tools and macOS package.
 - **2026-10-10** — USB map in macOS 26 format, Wi-Fi kexts for Tahoe (per file dates).

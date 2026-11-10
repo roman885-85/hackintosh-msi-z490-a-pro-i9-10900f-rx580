@@ -13,7 +13,7 @@ if [ -f "$P" ] && plutil -extract "OS Version" raw "$P" 2>/dev/null | grep -q "(
   echo "патчі Wi-Fi уже накладені для $BUILD — пропускаю"; exit 0
 fi
 OCLP="/Library/Application Support/Dortania/OpenCore-Patcher.app/Contents/MacOS/OpenCore-Patcher"
-[ -x "$OCLP" ] || { echo "OpenCore Legacy Patcher не встановлено — пропускаю"; exit 0; }
+[ -x "$OCLP" ] || { echo "OpenCore Legacy Patcher не встановлено — пропускаю. Встановіть OCLP 3.0.0-rc.3 з github.com/dortania/OpenCore-Legacy-Patcher/releases і запустіть цей пакет ще раз (або накладіть патчі в самому OCLP)"; exit 0; }
 echo "накладаю патчі OCLP (--patch_sys_vol) для $BUILD..."
 "$OCLP" --patch_sys_vol
 echo "OCLP завершився з кодом $?"

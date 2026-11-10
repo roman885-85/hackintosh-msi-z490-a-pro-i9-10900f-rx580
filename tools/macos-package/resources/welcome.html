@@ -1,13 +1,14 @@
-<html><head><meta charset="utf-8"><style>body{font-family:-apple-system,Helvetica;font-size:13px}</style></head><body>
+<html><head><meta charset="utf-8"><style>body{font-family:system-ui,-apple-system,Helvetica;font-size:13px}</style></head><body>
 <h2>Драйвери для MSI Z490-A PRO (macOS)</h2>
-<p>Пакет для комп'ютера на MSI Z490-A PRO: Core i9-10900F, Radeon RX 580, Realtek RTL8125B, Broadcom BCM4360, Realtek ALC897, модель Mac — MacPro7,1.</p>
-<p>Що він робить (кнопкою «Налаштувати» можна зняти будь-який пункт):</p>
+<p>Пакет ставиться вже після встановлення macOS на комп'ютер, що завантажується через OpenCore з цього репозиторію
+(Core i9-10900F, Radeon RX 580, Realtek RTL8125B, Broadcom BCM4360, Realtek ALC897, модель Mac — MacPro7,1).
+Кнопкою «Налаштувати» можна зняти будь-який пункт.</p>
 <ul>
-<li><b>Завантажувач OpenCore</b> — ставить робочий OpenCore на розділ EFI системного диска, якщо його там немає. Такий самий не чіпає; інший не замінює, а кладе поруч у <code>EFI_from_pkg</code>.</li>
-<li><b>Вбудований звук</b> — на macOS 26 і новіших ставить VoodooHDA (Apple прибрала AppleHDA). Після встановлення дозвольте його в «Параметри → Конфіденційність і безпека» і перезапустіть.</li>
-<li><b>OpenCore Legacy Patcher 3.0.0-rc.3</b> — офіційний пакет Dortania без змін.</li>
-<li><b>Wi-Fi Broadcom</b> — на macOS 14+ накладає патчі OCLP «Modern Wireless», якщо їх ще немає для цієї збірки macOS (2–5 хвилин).</li>
+<li><b>Вбудований звук (VoodooHDA 3.6.8)</b> — на macOS 26 і новіших (Apple прибрала AppleHDA). Після встановлення дозвольте його
+в «Параметри → Конфіденційність і безпека» і перезапустіть.</li>
+<li><b>Wi-Fi Broadcom: патчі OCLP</b> — на macOS 14+ накладає патчі «Modern Wireless» (2–5 хвилин), якщо їх ще немає для цієї збірки macOS.
+Потрібні встановлений <b>OpenCore Legacy Patcher</b> і драйвери Wi-Fi у EFI (див. README). Якщо OCLP немає — пункт нічого не робить.</li>
+<li><b>OpenCore Legacy Patcher</b> і <b>завантажувач OpenCore</b> — лише в пакеті, зібраному з ключами <code>--with-oclp</code> / <code>--with-efi</code>.</li>
 </ul>
 <p>Журнал встановлення: <code>/var/log/z490-drivers-install.log</code>.</p>
-<p>Перед збиранням пакета впишіть у <code>EFI/OC/config.plist</code> власні серійні номери (GenSMBIOS, MacPro7,1).</p>
 </body></html>
