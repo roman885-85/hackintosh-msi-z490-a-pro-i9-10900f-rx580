@@ -36,7 +36,8 @@ Wi-Fi Broadcom BCM4360 і мережею 2,5 Гбіт/с. Модель Mac — *
 ## Що всередині
 
 - **OpenCore** з позначкою версії `REL-108 MOD` — збірка-форк OpenCorePkg з квірком `EnableForAll`
-  (ACPI- і Booter-квірки застосовуються лише до macOS, Windows вантажиться без них).
+  (ACPI- і Booter-квірки застосовуються лише до macOS, Windows вантажиться без них). Офіційний `ocvalidate` 1.0.8 позначає
+  лише три ключі цього форку (`EnableForAll` ×2, `SkipCustomEntryCheck`) як невідомі — інших зауважень немає.
 - **SMBIOS:** `MacPro7,1`. **SecureBootModel:** `Disabled`, `revpatch=sbvmm,pci` (RestrictEvents).
 - **ACPI:** `MaLd0n.aml` (набір Olarila: EC, `plugin-type`, USBX, PMCR, MCHC, SMBus) і патч FADT — значення скидання `0x06 → 0x0E`,
   щоб перезапуск з macOS був повним (інакше після перезапуску не працювала USB-клавіатура, а Windows зависала).

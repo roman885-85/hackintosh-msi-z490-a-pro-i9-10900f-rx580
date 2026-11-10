@@ -36,7 +36,8 @@ Broadcom BCM4360 Wi-Fi and 2.5 Gbit/s Ethernet. SMBIOS is **MacPro7,1**. **Windo
 ## What's inside
 
 - **OpenCore** reporting `REL-108 MOD` — an OpenCorePkg fork with the `EnableForAll` quirk
-  (ACPI and Booter quirks apply to macOS only; Windows boots without them).
+  (ACPI and Booter quirks apply to macOS only; Windows boots without them). The official `ocvalidate` 1.0.8 flags only
+  this fork's three keys (`EnableForAll` ×2, `SkipCustomEntryCheck`) as unknown — nothing else.
 - **SMBIOS:** `MacPro7,1`. **SecureBootModel:** `Disabled`, `revpatch=sbvmm,pci` (RestrictEvents).
 - **ACPI:** `MaLd0n.aml` (Olarila bundle: EC, `plugin-type`, USBX, PMCR, MCHC, SMBus) and an FADT patch — reset value `0x06 → 0x0E`,
   so a restart from macOS is a full reset (otherwise the USB keyboard was dead after a restart and Windows hung).
